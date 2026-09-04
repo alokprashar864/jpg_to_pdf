@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, MessageEvent } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class RedisService implements OnModuleDestroy {
         }
       };
 
-      this.subscriber.subscribe(channel, (err) => {
+      this.subscriber.subscribe(channel, (err: any) => {
         if (err) observer.error(err);
       });
 

@@ -4,6 +4,7 @@ import { StorageService } from '../storage/storage.service';
 import { RedisService } from '../redis/redis.service';
 import { InitiateConversionDto } from './conversions.dto';
 import { JobStatus, PageSize, PageOrientation } from '@prisma/client';
+import { mergeMap } from 'rxjs/operators';
 
 @Injectable()
 export class ConversionsService {
@@ -89,7 +90,7 @@ export class ConversionsService {
       page_size: job.pageSize,
       orientation: job.orientation,
       target_s3_key: targetS3Key,
-      files: job.files.map(f => ({
+      files: job.files.map((f: any) => ({
         order: f.sequenceOrder,
         s3_key: f.inputS3Key,
       })),
@@ -101,6 +102,14 @@ export class ConversionsService {
   }
 
   subscribeToEvents(jobId: string) {
-    return this.redis.subscribeToJobEvents(jobId);
+    return this.redis.subscribeToJobEvents(jobId).pipe(
+      mergeMap(async (event) => {
+        if (event.type === 'complete') {
+          const url = await this.storage.generatePresignedGetUrl(`converted/${jobId}/output.pdf`);
+          event.data = { ...(event.data as any), downloadUrl: url };
+        }
+        return event;
+      })
+    );
   }
 }

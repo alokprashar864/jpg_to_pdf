@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, HeadObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
@@ -31,6 +31,14 @@ export class StorageService {
     return getSignedUrl(this.s3Client, command, { expiresIn: expiresInSeconds });
   }
 
+  async generatePresignedGetUrl(key: string, expiresInSeconds = 3600): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+    return getSignedUrl(this.s3Client, command, { expiresIn: expiresInSeconds });
+  }
+
   async verifyObjectExists(key: string): Promise<boolean> {
     try {
       const command = new HeadObjectCommand({
@@ -39,7 +47,7 @@ export class StorageService {
       });
       await this.s3Client.send(command);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
         return false;
       }
