@@ -58,3 +58,6 @@ logs/
 # GSD Artifacts / Temporary Data
 .gemini/
 scratch/
+
+
+.planing/
