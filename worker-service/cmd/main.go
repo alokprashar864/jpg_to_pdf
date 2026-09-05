@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -58,6 +59,26 @@ func main() {
 
 	worker := consumer.NewWorker(rdb, "conversions:jobs", "pdf_workers", "worker-1")
 	worker.InitGroup(context.Background())
+
+	// Start lightweight HTTP health server for Render Web Service
+	go func() {
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = "8080"
+		}
+		http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("worker ok"))
+		})
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("worker live"))
+		})
+		log.Printf("Health server listening on port %s", port)
+		if err := http.ListenAndServe(":"+port, nil); err != nil {
+			log.Printf("Health server error: %v", err)
+		}
+	}()
 
 	log.Println("Starting Go Worker Daemon with Real PDF Pipeline...")
 	
