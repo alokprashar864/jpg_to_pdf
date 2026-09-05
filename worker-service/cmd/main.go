@@ -42,7 +42,16 @@ func main() {
 		secretKey = "minioadmin"
 	}
 
-	s3Client, err := storage.NewS3Client(context.Background(), s3Endpoint, "us-east-1", accessKey, secretKey, "conversions")
+	region := os.Getenv("AWS_REGION")
+	if region == "" {
+		region = "auto"
+	}
+	bucketName := os.Getenv("S3_BUCKET_NAME")
+	if bucketName == "" {
+		bucketName = "conversions"
+	}
+
+	s3Client, err := storage.NewS3Client(context.Background(), s3Endpoint, region, accessKey, secretKey, bucketName)
 	if err != nil {
 		log.Fatalf("Failed to initialize S3 client: %v", err)
 	}
