@@ -19,6 +19,11 @@ export class RedisService implements OnModuleDestroy {
     await this.subscriber.quit();
   }
 
+  /** Sends a PING to Redis — used by the health check to verify connectivity. */
+  async ping(): Promise<string> {
+    return this.publisher.ping();
+  }
+
   async publishTaskToStream(streamKey: string, payload: any) {
     await this.publisher.xadd(streamKey, '*', 'payload', JSON.stringify(payload));
   }

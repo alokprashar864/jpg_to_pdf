@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { StorageModule } from './storage/storage.module';
 import { RedisModule } from './redis/redis.module';
 import { ConversionsModule } from './conversions/conversions.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { ConversionsModule } from './conversions/conversions.module';
     PrismaModule, 
     StorageModule, 
     RedisModule, 
-    ConversionsModule
+    ConversionsModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

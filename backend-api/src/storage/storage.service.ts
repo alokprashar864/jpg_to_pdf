@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, HeadObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, HeadObjectCommand, GetObjectCommand, DeleteObjectCommand, HeadBucketCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
@@ -65,5 +65,14 @@ export class StorageService {
     } catch (error) {
       console.error(`Failed to delete object ${key}:`, error);
     }
+  }
+
+  /**
+   * Lightweight health check — verifies connectivity to the S3/R2 bucket.
+   * Uses HeadBucket which does not list or read any objects.
+   */
+  async checkBucketExists(): Promise<void> {
+    const command = new HeadBucketCommand({ Bucket: this.bucketName });
+    await this.s3Client.send(command);
   }
 }
