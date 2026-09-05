@@ -24,5 +24,8 @@ RUN apk --no-cache add ca-certificates
 # Copy the binary from the builder stage
 COPY --from=builder /app/worker .
 
+# Expose port for HTTP health check
+EXPOSE 8080
+
 # Run the worker daemon
 CMD ["./worker"]
