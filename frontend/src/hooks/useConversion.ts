@@ -7,6 +7,7 @@ export function useConversion() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('');
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const cleanupSSE = useCallback(() => {
@@ -21,8 +22,9 @@ export function useConversion() {
       setStatus('PROCESSING');
       setProgress(0);
       setMessage('Triggering conversion worker...');
+      setJobId(jobId);
 
-      const res = await fetch(`http://localhost:3000/api/v1/conversions/${jobId}/start`, {
+      const res = await fetch(`http://localhost:4000/api/v1/conversions/${jobId}/start`, {
         method: 'POST',
       });
       
@@ -32,7 +34,7 @@ export function useConversion() {
       cleanupSSE();
 
       // Initiate SSE connection
-      const es = new EventSource(`http://localhost:3000/api/v1/conversions/${jobId}/events`);
+      const es = new EventSource(`http://localhost:4000/api/v1/conversions/${jobId}/events`);
       eventSourceRef.current = es;
 
       es.addEventListener('status', (e) => {
@@ -79,6 +81,7 @@ export function useConversion() {
     message,
     setMessage,
     downloadUrl,
+    jobId,
     triggerJobAndListen,
     cleanupSSE
   };

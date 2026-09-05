@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, Sse, MessageEvent } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Sse, MessageEvent, Delete } from '@nestjs/common';
 import { ConversionsService } from './conversions.service';
 import { InitiateConversionDto } from './conversions.dto';
 import { Observable } from 'rxjs';
@@ -20,5 +20,10 @@ export class ConversionsController {
   @Sse(':id/events')
   streamEvents(@Param('id') id: string): Observable<MessageEvent> {
     return this.conversionsService.subscribeToEvents(id);
+  }
+
+  @Delete(':id')
+  async deleteJob(@Param('id') id: string) {
+    return this.conversionsService.deleteJob(id);
   }
 }

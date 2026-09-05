@@ -1,6 +1,6 @@
-import { IsEnum, IsInt, IsOptional, IsString, IsArray, ValidateNested, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsArray, ValidateNested, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PageSize, PageOrientation } from '@prisma/client';
+import { PageSize, PageOrientation, PageMargin } from '@prisma/client';
 
 export class ConversionSettingsDto {
   @IsEnum(PageSize)
@@ -10,6 +10,10 @@ export class ConversionSettingsDto {
   @IsEnum(PageOrientation)
   @IsOptional()
   orientation?: PageOrientation;
+
+  @IsEnum(PageMargin)
+  @IsOptional()
+  margins?: PageMargin;
 
   @IsInt()
   @IsOptional()
@@ -25,6 +29,7 @@ export class FileDto {
 
   @IsInt()
   @Min(1)
+  @Max(104857600) // 100MB limit
   sizeBytes: number;
 }
 

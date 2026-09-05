@@ -24,6 +24,7 @@ export class ConversionsService {
         status: JobStatus.CREATED,
         pageSize: dto.settings?.pageSize || PageSize.A4,
         orientation: dto.settings?.orientation || PageOrientation.PORTRAIT,
+        margins: dto.settings?.margins || 'NONE',
         dpi: dto.settings?.dpi || 150,
         expiresAt,
       },
@@ -89,6 +90,7 @@ export class ConversionsService {
       dpi: job.dpi,
       page_size: job.pageSize,
       orientation: job.orientation,
+      margins: job.margins,
       target_s3_key: targetS3Key,
       files: job.files.map((f: any) => ({
         order: f.sequenceOrder,
@@ -111,5 +113,33 @@ export class ConversionsService {
         return event;
       })
     );
+  }
+
+  async deleteJob(jobId: string) {
+    const job = await this.prisma.conversionJob.findUnique({
+      where: { id: jobId },
+      include: { files: true },
+    });
+
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    // Delete raw files from storage
+    for (const file of job.files) {
+      await this.storage.deleteObject(file.inputS3Key);
+    }
+
+    // Delete output PDF if it exists
+    if (job.outputS3Key) {
+      await this.storage.deleteObject(job.outputS3Key);
+    }
+
+    // Delete from database
+    await this.prisma.conversionJob.delete({
+      where: { id: jobId },
+    });
+
+    return { success: true, message: 'Job and associated files securely deleted.' };
   }
 }
