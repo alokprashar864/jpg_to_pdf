@@ -29,6 +29,7 @@ describe('ConversionsService', () => {
                 files: [{ sequenceOrder: 1, inputS3Key: 'key1' }],
               }),
               update: vi.fn().mockResolvedValue({}),
+              delete: vi.fn().mockResolvedValue({}),
               findUnique: vi.fn(),
             },
           },
@@ -37,6 +38,7 @@ describe('ConversionsService', () => {
           provide: StorageService,
           useValue: {
             getPresignedUploadUrl: vi.fn().mockResolvedValue('url'),
+            deleteObject: vi.fn().mockResolvedValue(true),
           },
         },
         {
@@ -81,5 +83,38 @@ describe('ConversionsService', () => {
         margins: 'SMALL',
       })
     );
+  });
+
+  it('should securely delete job and all associated files from storage', async () => {
+    // Mock the findUnique response for deleteJob
+    prismaService.conversionJob.findUnique = vi.fn().mockResolvedValue({
+      id: 'job-456',
+      outputS3Key: 'converted/job-456/output.pdf',
+      files: [
+        { inputS3Key: 'raw/job-456/0.jpg' },
+        { inputS3Key: 'raw/job-456/1.jpg' }
+      ],
+    });
+    
+    // Mock deleteObject and delete record
+    const storageService = moduleRef.get(StorageService);
+    storageService.deleteObject = vi.fn().mockResolvedValue(true);
+    prismaService.conversionJob.delete = vi.fn().mockResolvedValue(true);
+
+    const result = await service.deleteJob('job-456');
+
+    // Assert successful message
+    expect(result.success).toBe(true);
+
+    // Assert storage deletions
+    expect(storageService.deleteObject).toHaveBeenCalledTimes(3);
+    expect(storageService.deleteObject).toHaveBeenCalledWith('raw/job-456/0.jpg');
+    expect(storageService.deleteObject).toHaveBeenCalledWith('raw/job-456/1.jpg');
+    expect(storageService.deleteObject).toHaveBeenCalledWith('converted/job-456/output.pdf');
+
+    // Assert DB deletion
+    expect(prismaService.conversionJob.delete).toHaveBeenCalledWith({
+      where: { id: 'job-456' },
+    });
   });
 });

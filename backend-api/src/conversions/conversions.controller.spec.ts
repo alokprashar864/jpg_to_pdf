@@ -19,6 +19,7 @@ describe('ConversionsController', () => {
               jobId: 'job-123',
               uploadTargets: [{ sequenceOrder: 1, s3Key: 'key1', presignedPutUrl: 'url' }],
             }),
+            deleteJob: vi.fn().mockResolvedValue({ success: true, message: 'Job and associated files securely deleted.' }),
           },
         },
       ],
@@ -47,5 +48,13 @@ describe('ConversionsController', () => {
         })
       })
     );
+  });
+
+  it('should call deleteJob on the service when DELETE endpoint is hit', async () => {
+    const result = await controller.deleteJob('job-789');
+
+    expect(result.success).toBe(true);
+    expect(result.message).toBe('Job and associated files securely deleted.');
+    expect(service.deleteJob).toHaveBeenCalledWith('job-789');
   });
 });
