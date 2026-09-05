@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { useConversion, JobStatus } from '@/hooks/useConversion';
 import { uploadFileToS3 } from '@/lib/uploader';
 import { generateLocalPdf } from '@/lib/localConverter';
+import { API_BASE_URL } from '@/lib/api';
 import { PrivacyTimer } from '@/components/PrivacyTimer';
 import { UploadCloud, GripVertical, X, FileImage, Settings, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
@@ -19,7 +20,7 @@ export function ConverterWidget() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [settings, setSettings] = useState({ pageSize: 'A4', orientation: 'PORTRAIT', margins: 'NONE', dpi: 150, engine: 'cloud' });
 
-  const { status, setStatus, progress, setProgress, message, setMessage, downloadUrl, jobId, triggerJobAndListen, cleanupSSE } = useConversion();
+  const { status, setStatus, progress, setProgress, message, setMessage, downloadUrl, setDownloadUrl, jobId, triggerJobAndListen, cleanupSSE } = useConversion();
 
   // Cleanup object URLs to avoid memory leaks
   useEffect(() => {
@@ -97,7 +98,7 @@ export function ConverterWidget() {
         }))
       };
 
-      const res = await fetch('http://localhost:4000/api/v1/conversions', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/conversions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

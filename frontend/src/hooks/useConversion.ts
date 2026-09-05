@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { API_BASE_URL } from '../lib/api';
 
 export type JobStatus = 'IDLE' | 'UPLOADING' | 'PROCESSING' | 'READY' | 'ERROR';
 
@@ -24,7 +25,7 @@ export function useConversion() {
       setMessage('Triggering conversion worker...');
       setJobId(jobId);
 
-      const res = await fetch(`http://localhost:4000/api/v1/conversions/${jobId}/start`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/conversions/${jobId}/start`, {
         method: 'POST',
       });
       
@@ -34,7 +35,7 @@ export function useConversion() {
       cleanupSSE();
 
       // Initiate SSE connection
-      const es = new EventSource(`http://localhost:4000/api/v1/conversions/${jobId}/events`);
+      const es = new EventSource(`${API_BASE_URL}/api/v1/conversions/${jobId}/events`);
       eventSourceRef.current = es;
 
       es.addEventListener('status', (e) => {
@@ -81,7 +82,9 @@ export function useConversion() {
     message,
     setMessage,
     downloadUrl,
+    setDownloadUrl,
     jobId,
+    setJobId,
     triggerJobAndListen,
     cleanupSSE
   };

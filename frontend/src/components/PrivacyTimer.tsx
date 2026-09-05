@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, Trash2 } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 export function PrivacyTimer({ 
   jobId, 
@@ -27,7 +28,7 @@ export function PrivacyTimer({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await fetch(`http://localhost:4000/api/v1/conversions/${jobId}`, {
+      await fetch(`${API_BASE_URL}/api/v1/conversions/${jobId}`, {
         method: 'DELETE',
       });
       onDelete();
