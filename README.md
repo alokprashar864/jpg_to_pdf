@@ -1,4 +1,6 @@
-# JPG to PDF Converter Platform
+<div align="center">
+
+# ⚡ JPG to PDF Converter Platform
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=A855F7&center=true&vCenter=true&random=false&width=750&lines=The+Anti-iLovePDF%3A+100%25+Privacy-First+Document+Engine;100MB+Free+Files+%E2%80%A2+Zero+Watermarks+%E2%80%A2+Zero+Ads;Dual+Engine%3A+Client-Side+WASM+%2B+High-Throughput+Go;Sub-800ms+Compilation+%E2%80%A2+Real-Time+SSE+Progress;Built+with+Next.js+14+%2B+NestJS+%2B+Redis+%2B+Cloudflare+R2" alt="Typing SVG" />
@@ -26,15 +28,11 @@
   </a>
 </div>
 
-<br/>
-
-<div align="center">
-  <strong>🌐 Live Production Web Application:</strong> <a href="https://jpg-to-pdf-zeta.vercel.app"><b>https://jpg-to-pdf-zeta.vercel.app</b></a>
-</div>
-
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+
+</div>
 
 ## 📑 Interactive System Radar & Directory
 
