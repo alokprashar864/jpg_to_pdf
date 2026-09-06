@@ -19,75 +19,94 @@
 
 ---
 
-## 🧭 System Map & Navigation
+## 📑 Interactive System Radar & Directory
 
 ```mermaid
-graph TD
-    classDef core fill:#7928CA,stroke:#FFF,stroke-width:2px,color:#FFF,font-weight:bold;
-    classDef prod fill:#0070F3,stroke:#FFF,stroke-width:1px,color:#FFF;
-    classDef dev fill:#10B981,stroke:#FFF,stroke-width:1px,color:#FFF;
-    classDef infra fill:#F5A623,stroke:#FFF,stroke-width:1px,color:#FFF;
-    classDef comm fill:#EC4899,stroke:#FFF,stroke-width:1px,color:#FFF;
+%%{init: {'theme': 'dark', 'themeVariables': { 'fontSize': '13px', 'fontFamily': 'Inter, system-ui, sans-serif' }}}%%
+flowchart TB
+    classDef core fill:#7928CA,stroke:#C084FC,stroke-width:3px,color:#FFFFFF,font-weight:bold;
+    classDef quadrant1 fill:#0F172A,stroke:#38BDF8,stroke-width:2px,color:#E0F2FE,font-weight:600;
+    classDef quadrant2 fill:#0F172A,stroke:#34D399,stroke-width:2px,color:#ECFDF5,font-weight:600;
+    classDef quadrant3 fill:#0F172A,stroke:#F59E0B,stroke-width:2px,color:#FEF3C7,font-weight:600;
+    classDef quadrant4 fill:#0F172A,stroke:#F43F5E,stroke-width:2px,color:#FFE4E6,font-weight:600;
 
-    Core(("⚡ JPG to PDF<br/>Platform")):::core
+    classDef nodeBlue fill:#0369A1,stroke:#38BDF8,stroke-width:1px,color:#FFFFFF;
+    classDef nodeGreen fill:#047857,stroke:#34D399,stroke-width:1px,color:#FFFFFF;
+    classDef nodeAmber fill:#B45309,stroke:#F59E0B,stroke-width:1px,color:#FFFFFF;
+    classDef nodeRose fill:#BE123C,stroke:#F43F5E,stroke-width:1px,color:#FFFFFF;
 
-    subgraph Product ["🎯 Product & Moat"]
+    subgraph NorthEast ["🚀 QUADRANT I: VALUE & DIFFERENTIATION"]
         direction TB
-        P1["💡 Why This Exists"]:::prod
-        P2["✨ Key Features"]:::prod
-        P3["🥊 Us vs. Them"]:::prod
+        Q1["💡 Core Proposition"]:::quadrant1
+        N1_1["💡 Why This Exists<br/>• Zero predatory paywalls<br/>• 100MB free files"]:::nodeBlue
+        N1_2["✨ Key Capabilities<br/>• Lossless 300 DPI<br/>• Drag-and-drop sort"]:::nodeBlue
+        N1_3["🥊 The Differentiator<br/>• Us vs. iLovePDF / Smallpdf"]:::nodeBlue
+        Q1 --> N1_1
+        N1_1 --> N1_2
+        N1_2 --> N1_3
     end
 
-    subgraph Developer ["🚀 Developer Hub"]
+    subgraph NorthWest ["⚙️ QUADRANT II: ARCHITECTURE & ENGINE"]
         direction TB
-        D1["📋 Prerequisites"]:::dev
-        D2["⚡ Quick Start (Local)"]:::dev
-        D3["📖 Web & API Usage"]:::dev
+        Q2["🏗️ Distributed Engine"]:::quadrant2
+        N2_1["⚡ Dual-Engine Topology<br/>• WASM Client Engine<br/>• Go Worker Daemon"]:::nodeGreen
+        N2_2["☁️ Cloudflare R2 Storage<br/>• Zero-egress bandwidth<br/>• 24h ephemeral purge"]:::nodeGreen
+        N2_3["⚙️ Environment Matrix<br/>• Full .env specifications"]:::nodeGreen
+        Q2 --> N2_1
+        N2_1 --> N2_2
+        N2_2 --> N2_3
     end
 
-    subgraph Infrastructure ["☁️ Cloud & Architecture"]
+    %% Central Hub
+    CORE(("⚡ JPG to PDF<br/>PLATFORM<br/>CORE")):::core
+
+    subgraph SouthEast ["🛠️ QUADRANT III: DEVELOPER ONBOARDING"]
         direction TB
-        I1["🏗 Architecture Overview"]:::infra
-        I2["⚙️ Configuration (.env)"]:::infra
-        I3["🪣 Cloudflare R2 ($0 Egress)"]:::infra
+        Q3["💻 Developer Workspace"]:::quadrant3
+        N3_1["📋 Prerequisites<br/>• Docker, Go 1.21, Node 20"]:::nodeAmber
+        N3_2["🚀 Local Quick Start<br/>• 5-min Docker Compose"]:::nodeAmber
+        N3_3["📖 API Reference<br/>• REST endpoints & SSE streams"]:::nodeAmber
+        Q3 --> N3_1
+        N3_1 --> N3_2
+        N3_2 --> N3_3
     end
 
-    subgraph Community ["🤝 Quality & Governance"]
+    subgraph SouthWest ["🛡️ QUADRANT IV: QUALITY & GOVERNANCE"]
         direction TB
-        C1["🧪 Testing & QA"]:::comm
-        C2["🗺️ Strategic Roadmap"]:::comm
-        C3["❓ FAQ & Troubleshooting"]:::comm
+        Q4["⚖️ Governance & Evolution"]:::quadrant4
+        N4_1["🧪 Automated Test Suite<br/>• Unit, Vitest, Go test"]:::nodeRose
+        N4_2["🗺️ Strategic Roadmap<br/>• v1.1 WASM to v1.5 ADRs"]:::nodeRose
+        N4_3["❓ Diagnostics & FAQ<br/>• CORS & memory tuning"]:::nodeRose
+        Q4 --> N4_1
+        N4_1 --> N4_2
+        N4_2 --> N4_3
     end
 
-    Core <---> Product
-    Core <---> Developer
-    Core <---> Infrastructure
-    Core <---> Community
+    %% Cross-Quadrant Hub Links
+    CORE ===>|Strategy| Q1
+    CORE ===>|Orchestration| Q2
+    CORE ===>|Execution| Q3
+    CORE ===>|Compliance| Q4
 
-    click P1 href "#-why-this-exists" "Go to Why This Exists"
-    click P2 href "#-key-features" "Go to Key Features"
-    click P3 href "#-us-vs-them" "Go to Us vs. Them"
-    click D1 href "#-prerequisites" "Go to Prerequisites"
-    click D2 href "#-quick-start-local-development" "Go to Quick Start"
-    click D3 href "#-usage-guide" "Go to Usage Guide"
-    click I1 href "#-architecture-overview" "Go to Architecture"
-    click I2 href "#️-configuration-reference" "Go to Configuration"
-    click I3 href "#️-production-deployment-cloudflare-r2" "Go to Cloudflare R2"
-    click C1 href "#-testing--quality-assurance" "Go to Testing"
-    click C2 href "#️-roadmap" "Go to Roadmap"
-    click C3 href "#-troubleshooting--faq" "Go to FAQ"
+    %% Inter-Quadrant Orbital Resonance Links
+    N1_3 -.- N3_1
+    N2_3 -.- N4_1
 ```
 
 <p align="center">
-  <a href="#-why-this-exists"><b>💡 Why This Exists</b></a> •
-  <a href="#-key-features"><b>✨ Features</b></a> •
-  <a href="#-architecture-overview"><b>🏗 Architecture</b></a> •
-  <a href="#-quick-start-local-development"><b>🚀 Quick Start</b></a> •
-  <a href="#-usage-guide"><b>📖 API</b></a> •
-  <a href="#️-production-deployment-cloudflare-r2"><b>☁️ Cloudflare R2</b></a> •
-  <a href="#️-roadmap"><b>🗺️ Roadmap</b></a> •
-  <a href="#-contributing"><b>🤝 Contributing</b></a> •
-  <a href="#-license"><b>📄 License</b></a>
+  <b>Jump Directly:</b>
+  <a href="#-why-this-exists"><code>💡 Why Us</code></a> •
+  <a href="#-key-features"><code>✨ Features</code></a> •
+  <a href="#-us-vs-them"><code>🥊 Comparison</code></a> •
+  <a href="#-architecture-overview"><code>🏗 Architecture</code></a> •
+  <a href="#-prerequisites"><code>📋 Prerequisites</code></a> •
+  <a href="#-quick-start-local-development"><code>🚀 Quick Start</code></a> •
+  <a href="#-usage-guide"><code>📖 API Guide</code></a> •
+  <a href="#️-production-deployment-cloudflare-r2"><code>☁️ Cloudflare R2</code></a> •
+  <a href="#-testing--quality-assurance"><code>🧪 Testing</code></a> •
+  <a href="#️-roadmap"><code>🗺️ Roadmap</code></a> •
+  <a href="#-troubleshooting--faq"><code>❓ FAQ</code></a> •
+  <a href="#-contributing"><code>🤝 Contributing</code></a>
 </p>
 
 ---
