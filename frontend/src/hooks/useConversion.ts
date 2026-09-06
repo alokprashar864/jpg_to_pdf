@@ -28,7 +28,7 @@ export function useConversion() {
       const res = await fetch(`${API_BASE_URL}/api/v1/conversions/${jobId}/start`, {
         method: 'POST',
       });
-      
+
       if (!res.ok) throw new Error('Failed to start conversion job');
 
       // Clean up any existing connection
@@ -61,7 +61,7 @@ export function useConversion() {
             const data = JSON.parse((e as any).data);
             errorMsg = data.message || errorMsg;
           }
-        } catch {}
+        } catch { }
 
         setMessage(errorMsg);
         setStatus('ERROR');

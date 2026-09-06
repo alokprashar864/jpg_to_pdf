@@ -1,0 +1,126 @@
+name: Feature Request
+description: Propose a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us evaluate and prioritize.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Target Component
+      description: Which part of the platform would this feature affect?
+      options:
+        - Frontend (Next.js / React / WASM)
+        - Backend API (NestJS / Prisma / PostgreSQL)
+        - Worker Service (Go / pdfcpu / govips)
+        - Infrastructure (Docker / Redis / Cloudflare R2)
+        - CI/CD / GitHub Actions
+        - Documentation / SEO
+        - Cross-cutting (multiple components)
+      default: 0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - P0 - Critical (Blocker for milestone, revenue impact)
+        - P1 - High (Significant user value, competitive advantage)
+        - P2 - Medium (Nice to have, improves UX)
+        - P3 - Low (Minor improvement, tech debt)
+      default: 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Target Milestone
+      description: Which milestone should this be targeted for?
+      options:
+        - v1.1 - Economic Sustainability & Abuse Defense
+        - v1.2 - The Wedge & Feature Moat
+        - v1.3 - Distribution Engine & Ecosystem
+        - v1.4 - Programmatic SEO Pivot
+        - v1.5 - Institutional Trust & Transparency
+        - Backlog (No specific milestone)
+      default: 5
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What user pain point does it address?
+      placeholder: Users currently struggle with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your ideal solution or implementation approach
+      placeholder: We should add...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches or solutions have you considered?
+      placeholder: Alternative approaches...
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Define clear, testable criteria for when this feature is complete
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical Considerations
+      description: Any technical constraints, dependencies, or implementation notes
+      placeholder: |
+        - Dependencies: ...
+        - API changes: ...
+        - Database migrations: ...
+        - Breaking changes: ...
+        - Performance impact: ...
+
+  - type: textarea
+    id: ux
+    attributes:
+      label: UX / Design Considerations
+      description: Any UI/UX mockups, wireframes, or design references
+      placeholder: Link to Figma, sketches, or reference implementations...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Readiness Checklist
+      options:
+        - label: I have reviewed the project roadmap and this aligns with strategic goals
+          required: false
+        - label: I have considered the economic impact (compute costs, storage costs)
+          required: false
+        - label: I have considered privacy implications
+          required: false
+        - label: This feature supports the "Anti-iLovePDF" positioning
+          required: false
