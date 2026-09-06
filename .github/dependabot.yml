@@ -5,34 +5,53 @@ updates:
   - package-ecosystem: "npm"
     directory: "/backend-api"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    labels:
-      - "area: backend-api"
-      - "type: security"
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    ignore:
+      # Ignore breaking major version upgrades across core libraries
+      - dependency-name: "@prisma/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@nestjs/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite-tsconfig-paths"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # Monitor npm dependencies for Frontend Web Client
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    labels:
-      - "area: frontend"
-      - "type: security"
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    ignore:
+      # Ignore breaking major version upgrades across core libraries
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # Monitor Go modules for Worker Service
   - package-ecosystem: "gomod"
     directory: "/worker-service"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    labels:
-      - "area: worker"
-      - "type: security"
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   # Monitor GitHub Actions workflow versions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+    open-pull-requests-limit: 2
