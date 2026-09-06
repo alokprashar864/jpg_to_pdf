@@ -124,7 +124,11 @@ flowchart TB
   <a href="#-contributing"><code>🤝 Contributing</code></a>
 </p>
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 💡 Why This Exists
 
@@ -153,9 +157,11 @@ flowchart TB
 | ⏳ **Indefinite Retention**<br>No visibility into when or if files are permanently deleted. | ⏱️ **Strict 24h Purge + Instant Delete**<br>Enforced automated lifecycle deletion rules on Cloudflare R2. |
 | 🪤 **Aggressive Ad Banners & Trackers**<br>Cluttered, deceptive UI designed to harvest ad impressions. | 🧼 **Zero Ads & Pure Glassmorphism**<br>Minimalist, focused, distraction-free open-source workspace. |
 
+<br/>
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+<br/>
 
 ## ✨ Key Features
 
@@ -170,7 +176,11 @@ flowchart TB
 | **Real-Time Progress**| Server-Sent Events (SSE) streaming | Accurate live feedback during heavy multi-image compilations |
 | **Zero-Egress Cost** | Cloudflare R2 S3-compatible storage | Sustainable open-source deployment with zero bandwidth penalty |
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 🥊 Us vs. Them
 
@@ -183,7 +193,11 @@ flowchart TB
 | **Interface** | Ad-heavy & deceptive redirect traps | **Clean Glassmorphic UI, Zero Ads** |
 | **Worker Architecture** | Slow single-threaded Node scripts | **Parallel Go Routines (`pdfcpu` + `govips`)** |
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 🏗 Architecture Overview
 
@@ -212,7 +226,11 @@ Our platform decouples stateful API orchestration from CPU-bound image processin
                                                                                                └── (SSE Progress)  ──> Next.js UI
 ```
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 📋 Prerequisites
 
@@ -223,9 +241,11 @@ Before running the project locally, ensure you have the following installed:
 - **Docker & Docker Compose:** `v24.x` or later (for local DB, Redis, MinIO)
 - **Package Manager:** `npm` or `pnpm`
 
+<br/>
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+<br/>
 
 ## 🚀 Quick Start (Local Development)
 
@@ -289,7 +309,11 @@ npm run dev
 ```
 *Web client will be available at: `http://localhost:3001` (or Next.js allocated port).*
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 📖 Usage Guide
 
@@ -330,9 +354,11 @@ curl -X PUT --upload-file page2.jpg "<PRESIGNED_UPLOAD_URL_2>"
 curl -N http://localhost:3000/api/jobs/<JOB_ID>/progress
 ```
 
+<br/>
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+<br/>
 
 ## ⚙️ Configuration Reference
 
@@ -355,9 +381,11 @@ All application secrets and endpoints can be customized in `.env`:
 
 </details>
 
+<br/>
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+<br/>
 
 ## ☁️ Production Deployment (Cloudflare R2)
 
@@ -377,7 +405,11 @@ To deploy at scale with zero bandwidth egress costs:
 3. **Lifecycle Rule:** Enable an Object Lifecycle Rule set to expire and purge objects after 24 hours (1 day).
 4. **Deploy Backend & Worker:** Set `S3_ENDPOINT`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` on Render or Railway.
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 🧪 Testing & Quality Assurance
 
@@ -397,7 +429,11 @@ cd ../frontend
 npm run test
 ```
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## ❓ Troubleshooting & FAQ
 
@@ -419,7 +455,11 @@ In-browser conversion utilizes WebAssembly and client-side canvas rendering. The
 `pdfcpu` is a high-performance PDF processing library written natively in Go without external Cgo dependencies, delivering sub-second compilation for high-resolution images.
 </details>
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 🗺️ Roadmap
 
@@ -435,9 +475,11 @@ In-browser conversion utilizes WebAssembly and client-side canvas rendering. The
   - [ ] Client-side OCR text extraction for searchable PDFs (Tesseract WASM)
   - [ ] One-click cloud import from Google Drive, Dropbox, and OneDrive
 
+<br/>
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
 </p>
+<br/>
 
 ## 🤝 Contributing & Community
 
@@ -475,7 +517,11 @@ In-browser conversion utilizes WebAssembly and client-side canvas rendering. The
 4. **Submit a Pull Request:** Open a PR against `main`. Our GitHub Actions CI will automatically test and validate your build.
 5. **Code of Conduct:** We are committed to a welcoming, harassment-free environment for all. Read our **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** before participating.
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ### 💖 Contributor Recognition
 
@@ -487,7 +533,11 @@ Every contributor who gets a PR merged is permanently immortalized in our projec
   </a>
 </p>
 
----
+<br/>
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=1,2,3,4&height=3&section=header" width="100%" alt="divider" />
+</p>
+<br/>
 
 ## 📄 License & Intellectual Property
 
