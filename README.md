@@ -19,23 +19,76 @@
 
 ---
 
-## 📑 Table of Contents
-- [💡 Why This Exists](#-why-this-exists)
-- [✨ Key Features](#-key-features)
-- [🥊 Us vs. Them](#-us-vs-them)
-- [🏗 Architecture Overview](#-architecture-overview)
-- [📋 Prerequisites](#-prerequisites)
-- [🚀 Quick Start (Local Development)](#-quick-start-local-development)
-- [📖 Usage Guide](#-usage-guide)
-  - [Web Interface](#1-web-interface)
-  - [REST API (Developers)](#2-rest-api-for-developers)
-- [⚙️ Configuration Reference](#️-configuration-reference)
-- [☁️ Production Deployment (Cloudflare R2)](#️-production-deployment-cloudflare-r2)
-- [🧪 Testing & Quality Assurance](#-testing--quality-assurance)
-- [❓ Troubleshooting & FAQ](#-troubleshooting--faq)
-- [🗺️ Roadmap](#️-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+## 🧭 System Map & Navigation
+
+```mermaid
+graph TD
+    classDef core fill:#7928CA,stroke:#FFF,stroke-width:2px,color:#FFF,font-weight:bold;
+    classDef prod fill:#0070F3,stroke:#FFF,stroke-width:1px,color:#FFF;
+    classDef dev fill:#10B981,stroke:#FFF,stroke-width:1px,color:#FFF;
+    classDef infra fill:#F5A623,stroke:#FFF,stroke-width:1px,color:#FFF;
+    classDef comm fill:#EC4899,stroke:#FFF,stroke-width:1px,color:#FFF;
+
+    Core(("⚡ JPG to PDF<br/>Platform")):::core
+
+    subgraph Product ["🎯 Product & Moat"]
+        direction TB
+        P1["💡 Why This Exists"]:::prod
+        P2["✨ Key Features"]:::prod
+        P3["🥊 Us vs. Them"]:::prod
+    end
+
+    subgraph Developer ["🚀 Developer Hub"]
+        direction TB
+        D1["📋 Prerequisites"]:::dev
+        D2["⚡ Quick Start (Local)"]:::dev
+        D3["📖 Web & API Usage"]:::dev
+    end
+
+    subgraph Infrastructure ["☁️ Cloud & Architecture"]
+        direction TB
+        I1["🏗 Architecture Overview"]:::infra
+        I2["⚙️ Configuration (.env)"]:::infra
+        I3["🪣 Cloudflare R2 ($0 Egress)"]:::infra
+    end
+
+    subgraph Community ["🤝 Quality & Governance"]
+        direction TB
+        C1["🧪 Testing & QA"]:::comm
+        C2["🗺️ Strategic Roadmap"]:::comm
+        C3["❓ FAQ & Troubleshooting"]:::comm
+    end
+
+    Core <---> Product
+    Core <---> Developer
+    Core <---> Infrastructure
+    Core <---> Community
+
+    click P1 href "#-why-this-exists" "Go to Why This Exists"
+    click P2 href "#-key-features" "Go to Key Features"
+    click P3 href "#-us-vs-them" "Go to Us vs. Them"
+    click D1 href "#-prerequisites" "Go to Prerequisites"
+    click D2 href "#-quick-start-local-development" "Go to Quick Start"
+    click D3 href "#-usage-guide" "Go to Usage Guide"
+    click I1 href "#-architecture-overview" "Go to Architecture"
+    click I2 href "#️-configuration-reference" "Go to Configuration"
+    click I3 href "#️-production-deployment-cloudflare-r2" "Go to Cloudflare R2"
+    click C1 href "#-testing--quality-assurance" "Go to Testing"
+    click C2 href "#️-roadmap" "Go to Roadmap"
+    click C3 href "#-troubleshooting--faq" "Go to FAQ"
+```
+
+<p align="center">
+  <a href="#-why-this-exists"><b>💡 Why This Exists</b></a> •
+  <a href="#-key-features"><b>✨ Features</b></a> •
+  <a href="#-architecture-overview"><b>🏗 Architecture</b></a> •
+  <a href="#-quick-start-local-development"><b>🚀 Quick Start</b></a> •
+  <a href="#-usage-guide"><b>📖 API</b></a> •
+  <a href="#️-production-deployment-cloudflare-r2"><b>☁️ Cloudflare R2</b></a> •
+  <a href="#️-roadmap"><b>🗺️ Roadmap</b></a> •
+  <a href="#-contributing"><b>🤝 Contributing</b></a> •
+  <a href="#-license"><b>📄 License</b></a>
+</p>
 
 ---
 
