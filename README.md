@@ -113,17 +113,30 @@ flowchart TB
 
 ## 💡 Why This Exists
 
-Most conventional "free" PDF conversion websites are predatory or user-hostile:
-- ❌ **Aggressive Paywalls:** 15–25 MB arbitrary file size caps that force you into recurring monthly subscriptions.
-- ❌ **Degraded Output:** Forced heavy re-compression, downsampling to 72 DPI, or branding your documents with intrusive watermarks.
-- ❌ **Hostile UI:** Deceptive download buttons, banner pop-ups, and trackers.
-- ❌ **Data Privacy Vulnerabilities:** Your sensitive legal docs, ID scans, or invoices are uploaded and stored indefinitely on third-party servers.
+> [!CAUTION]
+> ### 🛑 The Problem: The Predatory "Free" Converter Trap
+> Most commercial online converters (iLovePDF, Smallpdf, PDF Candy) lure users with a "free" claim, then aggressively monetize document urgency through user-hostile mechanics:
+> - **Arbitrary Paywalls:** 15–25 MB caps strategically engineered to fail on high-res camera scans or multi-page documents.
+> - **Permanent Data Harvesting:** Invoices, tax returns, and ID scans are uploaded to opaque third-party cloud disks with no proof of deletion.
+> - **Degraded Quality & Watermarks:** Files are re-compressed down to 72 DPI, ruining small print unless you purchase a monthly subscription.
+> - **Deceptive Dark Patterns:** Full-screen popups, countdown blockers, and fake download buttons running tracking scripts.
 
-### 🌟 Our Solution
-- ✅ **100 MB Free File Limits** — 4x larger than industry incumbents without paying a penny.
-- ✅ **Zero Watermarks & Lossless Quality** — Export clean PDFs preserving original 150/300 DPI resolutions.
-- ✅ **Dual-Engine Privacy Architecture** — Switch to **Local In-Browser Mode (WASM)** where files never touch a server, or use **Cloud Worker Mode** for massive multi-gigabyte queues.
-- ✅ **Automated Ephemeral Storage** — Any file uploaded to the cloud worker automatically self-destructs via strict 24-hour lifecycle rules with an instant manual "Delete Now" button.
+> [!TIP]
+> ### ⚡ The Mission: Enterprise Quality with Zero-Compromise Privacy
+> We engineered this platform to be the definitive **open-source, privacy-first alternative**:
+> - **Client-First Inversion (WASM):** Small-to-medium files compile right inside your browser's WebAssembly sandbox. **0 bytes leave your machine.**
+> - **High-Throughput Distributed Cloud Worker:** Massive multi-gigabyte queues scale seamlessly through Go goroutines (`pdfcpu` + `govips`).
+> - **Zero Bandwidth Penalties:** Integrated with Cloudflare R2's zero-egress S3 API, allowing unlimited 100 MB free conversions without cost traps.
+
+### 🥊 The Architecture Shift at a Glance
+
+| ❌ **The Predatory Incumbents** | 🟢 **Our Open-Source Architecture** |
+| :--- | :--- |
+| 🚫 **Capped at 15–25 MB**<br>Forces paid subscription traps when submitting documents. | ⚡ **100 MB Free File Limits**<br>4x higher than standard industry ceilings. |
+| 📉 **Forced Recompression & Branding**<br>Downsamples to 72 DPI and adds unwanted watermarks. | 💎 **Lossless 150/300 DPI Fidelity**<br>Pixel-perfect clarity, zero watermarks, legal-ready output. |
+| 👁️ **Opaque Server Logging**<br>Sensitive personal files uploaded and retained indefinitely. | 🛡️ **Dual-Engine Privacy (WASM First)**<br>Local mode runs 100% in-browser; files never touch a wire. |
+| ⏳ **Indefinite Retention**<br>No visibility into when or if files are permanently deleted. | ⏱️ **Strict 24h Purge + Instant Delete**<br>Enforced automated lifecycle deletion rules on Cloudflare R2. |
+| 🪤 **Aggressive Ad Banners & Trackers**<br>Cluttered, deceptive UI designed to harvest ad impressions. | 🧼 **Zero Ads & Pure Glassmorphism**<br>Minimalist, focused, distraction-free open-source workspace. |
 
 ---
 
