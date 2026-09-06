@@ -1,0 +1,44 @@
+name: CI - Worker Service
+
+on:
+  push:
+    paths:
+      - 'worker-service/**'
+      - '.github/workflows/ci-worker.yml'
+  pull_request:
+    paths:
+      - 'worker-service/**'
+      - '.github/workflows/ci-worker.yml'
+
+jobs:
+  test:
+    name: Go Lint, Vet & Test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: worker-service
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: worker-service/go.sum
+
+      - name: Go Format Check
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "Go code is not formatted according to gofmt:"
+            gofmt -l .
+            exit 1
+          fi
+
+      - name: Go Vet
+        run: go vet ./...
+
+      - name: Run Go Tests
+        run: go test -v ./...

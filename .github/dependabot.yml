@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  # Monitor npm dependencies for Backend API
+  - package-ecosystem: "npm"
+    directory: "/backend-api"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "area: backend-api"
+      - "type: security"
+
+  # Monitor npm dependencies for Frontend Web Client
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "area: frontend"
+      - "type: security"
+
+  # Monitor Go modules for Worker Service
+  - package-ecosystem: "gomod"
+    directory: "/worker-service"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "area: worker"
+      - "type: security"
+
+  # Monitor GitHub Actions workflow versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
