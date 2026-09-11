@@ -35,7 +35,19 @@ export class ConversionsService {
     // Create files linking to the job ID to form proper S3 keys
     for (let i = 0; i < dto.files.length; i++) {
       const file = dto.files[i];
-      const extension = file.fileName.split('.').pop() || 'jpg';
+      const extension = file.fileName.split('.').pop()?.toLowerCase() || '';
+
+      const extMap: Record<string, string> = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'webp': 'image/webp',
+      };
+
+      if (extMap[extension] !== file.mimeType) {
+        throw new BadRequestException(`File extension .${extension} does not match declared MIME type ${file.mimeType}`);
+      }
+
       const s3Key = `raw/${job.id}/${i}.${extension}`;
       
       await this.prisma.jobFile.create({

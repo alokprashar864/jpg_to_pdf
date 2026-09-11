@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, IsArray, ValidateNested, Min, Max } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsArray, ValidateNested, Min, Max, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PageSize, PageOrientation, PageMargin } from '@prisma/client';
 
@@ -25,6 +25,7 @@ export class FileDto {
   fileName: string;
 
   @IsString()
+  @IsIn(['image/jpeg', 'image/png', 'image/webp'])
   mimeType: string;
 
   @IsInt()

@@ -68,6 +68,9 @@ func (w *Worker) Start(ctx context.Context, handler func(ctx context.Context, pa
 				if err := json.Unmarshal([]byte(payloadStr), &payload); err == nil {
 					if err := handler(ctx, payload); err != nil {
 						log.Printf("Handler error for job: %v", err)
+						if jobId, ok := payload["job_id"].(string); ok {
+							w.PublishEvent(ctx, jobId, "ERROR", 0, err.Error())
+						}
 					}
 				}
 				
