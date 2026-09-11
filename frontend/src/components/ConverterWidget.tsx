@@ -302,34 +302,27 @@ export function ConverterWidget() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-neutral-300">Processing Engine</p>
-                      <span className={clsx(
-                        "text-[10px] uppercase font-bold px-2 py-1 rounded-full",
-                        settings.engine === 'local' ? "bg-purple-950 text-purple-400" : "bg-blue-950 text-blue-400"
-                      )}>
-                        {settings.engine === 'local' ? '⚡ Processing Locally (Zero-Trust)' : '☁️ Cloud Batch Mode'}
-                      </span>
-                    </div>
-                    <div className="flex bg-neutral-900 rounded-lg p-1">
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-medium text-neutral-400">Processing Engine</label>
+                    <div className="flex bg-neutral-950 border border-neutral-800 rounded-lg p-1">
                       <button
+                        type="button"
                         onClick={() => setSettings({ ...settings, engine: 'cloud' })}
                         className={clsx(
-                          "flex-1 py-1.5 text-xs font-medium rounded-md transition",
-                          settings.engine === 'cloud' ? "bg-blue-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition-all",
+                          settings.engine === 'cloud' ? "bg-blue-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
                         )}
                       >
                         Force Cloud
                       </button>
                       <button
+                        type="button"
                         onClick={() => setSettings({ ...settings, engine: 'local' })}
                         disabled={images.length > 20 || images.reduce((sum, img) => sum + img.file.size, 0) > 50 * 1024 * 1024}
                         className={clsx(
-                          "flex-1 py-1.5 text-xs font-medium rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed",
-                          settings.engine === 'local' ? "bg-purple-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+                          settings.engine === 'local' ? "bg-purple-600 text-white shadow-sm" : "text-neutral-400 hover:text-white"
                         )}
-                        title={images.length > 20 || images.reduce((sum, img) => sum + img.file.size, 0) > 50 * 1024 * 1024 ? "Payload too large for local processing" : ""}
                       >
                         Force Local
                       </button>
