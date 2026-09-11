@@ -1,0 +1,37 @@
+# KrocPDF — Cursor Rules & Project Guidelines
+# Target: Cursor IDE AI Agent & Assistant
+
+## 1. Project Architecture & Subdirectories
+- `frontend/`: Next.js 16 (App Router, Turbopack), React 19, Tailwind v4, `@hello-pangea/dnd`, `pdf-lib` (WASM conversion).
+- `backend-api/`: NestJS 12, Express, Prisma 5 (PostgreSQL), IORedis (Redis 7 Streams), AWS S3 SDK (MinIO presigning), Oxlint, Vitest.
+- `worker-service/`: Go 1.25, `pdfcpu`, `aws-sdk-go-v2`, `go-redis/v9`.
+- Root infrastructure: `docker-compose.yml` (PostgreSQL 16, Redis 7 AOF, MinIO with 1-day retention policy).
+
+## 2. Universal Non-Negotiables & Forbidden Patterns
+- **FORBIDDEN**: Never remove or bypass client-side WASM conversion (`generateLocalPdf` via `pdf-lib`) in `frontend/`. Small conversions ($<50$ MB) MUST stay local for user privacy.
+- **FORBIDDEN**: Never commit secrets, credentials, or production `.env` files. Always use `.env.example` templates.
+- **FORBIDDEN**: Never push directly to `main`. Work on feature or fix topic branches and follow Conventional Commits (`feat:`, `fix:`, `perf:`, `docs:`).
+- **FORBIDDEN**: Never use `any` in TypeScript. Catch blocks must use `err: unknown` with `err instanceof Error` validation.
+- **FORBIDDEN**: In Go (`worker-service/`), never ignore errors (`_ = func()`). Propagate errors cleanly with context.
+- **FORBIDDEN**: In `frontend/AGENTS.md`, never delete or alter lines 1–9 (`<!-- BEGIN:nextjs-agent-rules --> ... <!-- END:nextjs-agent-rules -->`). Next.js dev server auto-injects this block.
+
+## 3. Technology Conventions & Preferred Libraries
+- **Frontend Styling**: Tailwind CSS v4. Do NOT create or edit `tailwind.config.js`. Place `@theme` custom tokens and keyframes in `src/app/globals.css`.
+- **Drag & Drop**: Use `@hello-pangea/dnd`. Do NOT import deprecated `react-beautiful-dnd`.
+- **Icons**: Use `lucide-react`.
+- **Memory Hygiene**: When generating `URL.createObjectURL(blob)` in React, always revoke it in a `useEffect` return cleanup or on conversion finish (`URL.revokeObjectURL(url)`).
+- **Interactive Components**: Place `'use client';` at the top of all interactive client components in `frontend/src/components/`.
+
+## 4. Cross-Service Coordination (Wave Protocol)
+When modifying code spanning multiple layers, execute in order:
+1. Wave 1: Infra & DB (`docker-compose.yml`, `backend-api/prisma/schema.prisma`).
+2. Wave 2: Worker Engine (`worker-service/internal/` Go structs and processors).
+3. Wave 3: API Gateway (`backend-api/src/` NestJS DTOs, controllers, SSE streams).
+4. Wave 4: Frontend Client (`frontend/src/` hooks, types, UI components).
+5. Wave 5: Verification Gate (`npx tsc --noEmit`, `npm run lint`, `go vet ./...`).
+
+## 5. Standard Commands
+- Frontend checks: `cd frontend && npx tsc --noEmit && npm run lint`
+- Backend API checks: `cd backend-api && npm run lint && npm run test`
+- Worker checks: `cd worker-service && go vet ./... && go test ./...`
+- Local infrastructure: `docker-compose up -d`

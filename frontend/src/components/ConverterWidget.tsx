@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { useConversion, JobStatus } from '@/hooks/useConversion';
+import { useConversion } from '@/hooks/useConversion';
 import { uploadFileToS3 } from '@/lib/uploader';
 import { generateLocalPdf } from '@/lib/localConverter';
 import { API_BASE_URL } from '@/lib/api';
@@ -112,12 +112,10 @@ export function ConverterWidget() {
       let completedUploads = 0;
 
       const uploadPromises = images.map((img, i) => {
-        const target = data.uploadTargets.find((t: any) => t.sequenceOrder === i);
+        const target = data.uploadTargets.find((t: { sequenceOrder: number; presignedPutUrl: string }) => t.sequenceOrder === i);
         if (!target) throw new Error('Missing upload target for sequence ' + i);
 
-        return uploadFileToS3(img.file, target.presignedPutUrl, (percent) => {
-          // Track progress
-        }).then(() => {
+        return uploadFileToS3(img.file, target.presignedPutUrl).then(() => {
           completedUploads++;
           setProgress((completedUploads / images.length) * 100);
         });
@@ -127,9 +125,9 @@ export function ConverterWidget() {
 
       await triggerJobAndListen(data.jobId);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('ERROR');
-      setMessage(err.message || 'Upload failed');
+      setMessage(err instanceof Error ? err.message : 'Upload failed');
     }
   };
 
@@ -350,6 +348,7 @@ export function ConverterWidget() {
                               snapshot.isDragging ? "border-blue-500 shadow-xl shadow-blue-500/20" : "border-neutral-800"
                             )}
                           >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={img.previewUrl} alt={img.file.name} className="w-full h-full object-cover opacity-80" />
 
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex flex-col justify-between p-2">
