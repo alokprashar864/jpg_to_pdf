@@ -5,6 +5,7 @@ export interface LayoutSettings {
   orientation: string;
   margins: string;
   dpi: number;
+  transparencyMode?: string;
 }
 
 const PAGE_DIMENSIONS: Record<string, [number, number]> = {
@@ -42,26 +43,56 @@ export async function generateLocalPdf(
       htmlImage.src = imageUrl;
     });
 
-    const canvas = document.createElement('canvas');
-    canvas.width = htmlImage.width;
-    canvas.height = htmlImage.height;
-    const ctx = canvas.getContext('2d');
-    
-    if (ctx) {
-      // Flatten transparency to white by default (required for standard PDF embedding without alpha channels if not supported, or just to unify)
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(htmlImage, 0, 0);
+    // Device-Aware Memory Fallback
+    const isMobile = window.innerWidth <= 1024 || (navigator.maxTouchPoints || 0) > 0;
+    // @ts-expect-error - deviceMemory is non-standard
+    const isLowMemory = navigator.deviceMemory && navigator.deviceMemory < 8;
+    const maxDimension = (isMobile || isLowMemory) ? 2000 : 4000;
+
+    if (htmlImage.width > maxDimension || htmlImage.height > maxDimension) {
+      URL.revokeObjectURL(imageUrl);
+      htmlImage = null;
+      throw new Error('MEMORY_FALLBACK');
     }
 
-    const dataUrl = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 1.0);
-    const base64Data = dataUrl.split(',')[1];
-    
-    // Convert base64 to Uint8Array for pdf-lib
-    const binaryString = window.atob(base64Data);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let j = 0; j < binaryString.length; j++) {
-      bytes[j] = binaryString.charCodeAt(j);
+    let bytes: Uint8Array;
+
+    if (file.type === 'image/png' && settings.transparencyMode === 'keep_transparent') {
+      // Direct passthrough for keeping transparency to avoid canvas pre-multiplied alpha issues
+      const buffer = await file.arrayBuffer();
+      bytes = new Uint8Array(buffer);
+    } else {
+      const canvas = document.createElement('canvas');
+      canvas.width = htmlImage.width;
+      canvas.height = htmlImage.height;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        if (settings.transparencyMode === 'flatten_black') {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          // Default to flatten_white
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(htmlImage, 0, 0);
+      }
+
+      // Use native toBlob for memory efficiency instead of DataURL string parsing
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, file.type === 'image/png' ? 'image/png' : 'image/jpeg', 1.0);
+      });
+      
+      if (!blob) throw new Error('Canvas toBlob failed');
+      const arrayBuffer = await blob.arrayBuffer();
+      bytes = new Uint8Array(arrayBuffer);
+
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      canvas.width = 0;
+      canvas.height = 0;
     }
 
     let image;
@@ -71,9 +102,6 @@ export async function generateLocalPdf(
       image = await pdfDoc.embedPng(bytes);
     } else {
       // Explicit cleanup before continue
-      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-      canvas.width = 0;
-      canvas.height = 0;
       URL.revokeObjectURL(imageUrl);
       htmlImage = null;
       continue;
@@ -122,11 +150,6 @@ export async function generateLocalPdf(
     });
     
     // Explicit Cleanup for memory bounding
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    canvas.width = 0;
-    canvas.height = 0;
     URL.revokeObjectURL(imageUrl);
     htmlImage = null;
     

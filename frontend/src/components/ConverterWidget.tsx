@@ -19,7 +19,7 @@ interface ImageFile {
 
 export function ConverterWidget() {
   const [images, setImages] = useState<ImageFile[]>([]);
-  const [settings, setSettings] = useState({ pageSize: 'A4', orientation: 'PORTRAIT', margins: 'NONE', dpi: 150, engine: 'cloud' });
+  const [settings, setSettings] = useState({ pageSize: 'A4', orientation: 'PORTRAIT', margins: 'NONE', dpi: 150, engine: 'cloud', transparencyMode: 'flatten_white' });
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const { status, setStatus, progress, setProgress, message, setMessage, downloadUrl, setDownloadUrl, jobId, triggerJobAndListen, cleanupSSE } = useConversion();
@@ -97,15 +97,26 @@ export function ConverterWidget() {
 
       if (settings.engine === 'local') {
         setMessage('Generating PDF locally in your browser...');
-        const url = await generateLocalPdf(
-          images.map(img => img.file),
-          settings,
-          (percent) => setProgress(percent)
-        );
-        setMessage('Local conversion complete!');
-        setDownloadUrl(url); // Set download directly, skipping SSE
-        setStatus('READY');
-        return;
+        try {
+          const url = await generateLocalPdf(
+            images.map(img => img.file),
+            settings,
+            (percent) => setProgress(percent)
+          );
+          setMessage('Local conversion complete!');
+          setDownloadUrl(url); // Set download directly, skipping SSE
+          setStatus('READY');
+          return;
+        } catch (err: unknown) {
+          if (err instanceof Error && err.message === 'MEMORY_FALLBACK') {
+            setSettings(s => ({ ...s, engine: 'cloud' }));
+            setToastMsg('File too large for browser. Using secure cloud worker. Automatically deleted in 1 hour.');
+            setTimeout(() => setToastMsg(null), 5000);
+            // Fall through to cloud conversion
+          } else {
+            throw err;
+          }
+        }
       }
 
       setMessage('Requesting upload URLs...');
@@ -364,6 +375,39 @@ export function ConverterWidget() {
                       <option value="LARGE">Large</option>
                     </select>
                   </label>
+
+                  <div className="space-y-2">
+                    <p className="text-sm text-neutral-400">Transparency Mode</p>
+                    <div className="flex bg-neutral-900 rounded-lg p-1">
+                      <button
+                        onClick={() => setSettings({ ...settings, transparencyMode: 'flatten_white' })}
+                        className={clsx(
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition",
+                          settings.transparencyMode === 'flatten_white' ? "bg-neutral-200 text-black shadow-md" : "text-neutral-400 hover:text-white"
+                        )}
+                      >
+                        White
+                      </button>
+                      <button
+                        onClick={() => setSettings({ ...settings, transparencyMode: 'flatten_black' })}
+                        className={clsx(
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition",
+                          settings.transparencyMode === 'flatten_black' ? "bg-neutral-800 text-white shadow-md border border-neutral-700" : "text-neutral-400 hover:text-white"
+                        )}
+                      >
+                        Black
+                      </button>
+                      <button
+                        onClick={() => setSettings({ ...settings, transparencyMode: 'keep_transparent' })}
+                        className={clsx(
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition",
+                          settings.transparencyMode === 'keep_transparent' ? "bg-blue-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
+                        )}
+                      >
+                        Preserve
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -403,6 +447,11 @@ export function ConverterWidget() {
                               "relative group w-32 h-40 rounded-xl overflow-hidden border-2",
                               snapshot.isDragging ? "border-blue-500 shadow-xl shadow-blue-500/20" : "border-neutral-800"
                             )}
+                            style={{
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h8v8H0zM8 8h8v8H8z' fill='%231a1a1a' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+                              backgroundSize: '16px 16px',
+                              backgroundColor: '#262626'
+                            }}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={img.previewUrl} alt={img.file.name} className="w-full h-full object-cover opacity-80" />

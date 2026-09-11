@@ -18,6 +18,11 @@ export class ConversionSettingsDto {
   @IsInt()
   @IsOptional()
   dpi?: number;
+
+  @IsString()
+  @IsIn(['flatten_white', 'flatten_black', 'keep_transparent'])
+  @IsOptional()
+  transparencyMode?: string;
 }
 
 export class FileDto {

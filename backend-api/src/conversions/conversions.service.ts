@@ -26,6 +26,7 @@ export class ConversionsService {
         orientation: dto.settings?.orientation || PageOrientation.PORTRAIT,
         margins: dto.settings?.margins || 'NONE',
         dpi: dto.settings?.dpi || 150,
+        transparencyMode: (dto.settings?.transparencyMode as any) || 'FLATTEN_WHITE',
         expiresAt,
       },
     });
@@ -103,6 +104,7 @@ export class ConversionsService {
       page_size: job.pageSize,
       orientation: job.orientation,
       margins: job.margins,
+      transparency_mode: (job as any).transparencyMode,
       target_s3_key: targetS3Key,
       files: job.files.map((f: any) => ({
         order: f.sequenceOrder,
