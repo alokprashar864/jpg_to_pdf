@@ -5,6 +5,7 @@ export interface LayoutSettings {
   orientation: string;
   margins: string;
   dpi: number;
+  transparencyMode?: string;
 }
 
 const PAGE_DIMENSIONS: Record<string, [number, number]> = {
@@ -31,14 +32,78 @@ export async function generateLocalPdf(
   
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const arrayBuffer = await file.arrayBuffer();
     
+    // Create image element to draw on canvas
+    const imageUrl = URL.createObjectURL(file);
+    let htmlImage: HTMLImageElement | null = new Image();
+    await new Promise((resolve, reject) => {
+      if (!htmlImage) return reject();
+      htmlImage.onload = resolve;
+      htmlImage.onerror = reject;
+      htmlImage.src = imageUrl;
+    });
+
+    // Device-Aware Memory Fallback
+    const isMobile = window.innerWidth <= 1024 || (navigator.maxTouchPoints || 0) > 0;
+    // @ts-expect-error - deviceMemory is non-standard
+    const isLowMemory = navigator.deviceMemory && navigator.deviceMemory < 8;
+    const maxDimension = (isMobile || isLowMemory) ? 2000 : 4000;
+
+    if (htmlImage.width > maxDimension || htmlImage.height > maxDimension) {
+      URL.revokeObjectURL(imageUrl);
+      htmlImage = null;
+      throw new Error('MEMORY_FALLBACK');
+    }
+
+    let bytes: Uint8Array;
+
+    if (file.type === 'image/png' && settings.transparencyMode === 'keep_transparent') {
+      // Direct passthrough for keeping transparency to avoid canvas pre-multiplied alpha issues
+      const buffer = await file.arrayBuffer();
+      bytes = new Uint8Array(buffer);
+    } else {
+      const canvas = document.createElement('canvas');
+      canvas.width = htmlImage.width;
+      canvas.height = htmlImage.height;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        if (settings.transparencyMode === 'flatten_black') {
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          // Default to flatten_white
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(htmlImage, 0, 0);
+      }
+
+      // Use native toBlob for memory efficiency instead of DataURL string parsing
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, file.type === 'image/png' ? 'image/png' : 'image/jpeg', 1.0);
+      });
+      
+      if (!blob) throw new Error('Canvas toBlob failed');
+      const arrayBuffer = await blob.arrayBuffer();
+      bytes = new Uint8Array(arrayBuffer);
+
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+
     let image;
     if (file.type === 'image/jpeg') {
-      image = await pdfDoc.embedJpg(arrayBuffer);
+      image = await pdfDoc.embedJpg(bytes);
     } else if (file.type === 'image/png') {
-      image = await pdfDoc.embedPng(arrayBuffer);
+      image = await pdfDoc.embedPng(bytes);
     } else {
+      // Explicit cleanup before continue
+      URL.revokeObjectURL(imageUrl);
+      htmlImage = null;
       continue;
     }
     
@@ -84,6 +149,13 @@ export async function generateLocalPdf(
       height: finalHeight,
     });
     
+    // Explicit Cleanup for memory bounding
+    URL.revokeObjectURL(imageUrl);
+    htmlImage = null;
+    
+    // Yield to GC
+    await new Promise(r => setTimeout(r, 10));
+
     onProgress(Math.round(((i + 1) / files.length) * 100));
   }
 

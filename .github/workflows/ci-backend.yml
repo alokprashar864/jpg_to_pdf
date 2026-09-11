@@ -38,6 +38,8 @@ jobs:
 
       - name: Validate Prisma Schema
         run: npx prisma validate
+        env:
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
 
       - name: Run ESLint
         run: npm run lint --if-present

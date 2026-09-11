@@ -37,6 +37,12 @@ enum PageSize {
   FIT_TO_IMAGE
 }
 
+enum TransparencyMode {
+  FLATTEN_WHITE
+  FLATTEN_BLACK
+  KEEP_TRANSPARENT
+}
+
 model ConversionJob {
   id              String          @id @default(uuid()) @db.Uuid
   status          JobStatus       @default(CREATED)
@@ -47,6 +53,7 @@ model ConversionJob {
   orientation     PageOrientation @default(PORTRAIT)
   margins         PageMargin      @default(NONE)
   dpi             Int             @default(150)
+  transparencyMode TransparencyMode @default(FLATTEN_WHITE) @map("transparency_mode")
   
   // Output artifact
   outputS3Key     String?         @map("output_s3_key")

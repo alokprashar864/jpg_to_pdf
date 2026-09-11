@@ -117,4 +117,16 @@ describe('ConversionsService', () => {
       where: { id: 'job-456' },
     });
   });
+
+  it('should throw BadRequestException when file extension does not match MIME type', async () => {
+    // Mock the create call
+    prismaService.conversionJob.create = vi.fn().mockResolvedValue({ id: 'job-789' });
+
+    // Call with mismatching extension and MIME type
+    await expect(
+      service.createConversionJob({
+        files: [{ fileName: 'malicious.php.jpg', mimeType: 'image/png', sizeBytes: 1000 }],
+      })
+    ).rejects.toThrow('File extension .jpg does not match declared MIME type image/png');
+  });
 });

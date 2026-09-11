@@ -13,6 +13,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"worker-service/internal/consumer"
 	"worker-service/internal/converter"
+	"worker-service/internal/processor"
 	"worker-service/internal/storage"
 	"worker-service/internal/validator"
 )
@@ -169,10 +170,29 @@ func main() {
 		margins, ok := payload["margins"].(string)
 		if !ok { margins = "NONE" }
 
+		transparencyMode, ok := payload["transparency_mode"].(string)
+		if !ok { transparencyMode = "FLATTEN_WHITE" }
+
+		var finalImagePaths []string
+		for i, localPath := range imagePaths {
+			// Extract format from the localPath extension
+			ext := filepath.Ext(localPath)
+			format := "jpg"
+			if len(ext) > 1 {
+				format = ext[1:]
+			}
+			processedPath, err := processor.ProcessImage(localPath, format, transparencyMode)
+			if err != nil {
+				worker.PublishEvent(ctx, jobId, "FAILED", 0, fmt.Sprintf("Image processing failed for %d: %v", i+1, err))
+				return err
+			}
+			finalImagePaths = append(finalImagePaths, processedPath)
+		}
+
 		worker.PublishEvent(ctx, jobId, "PROCESSING", 60, "Generating PDF...")
 		
 		outPath := filepath.Join(tempDir, "output.pdf")
-		if err := converter.GeneratePDF(ctx, imagePaths, outPath, pageSize, orientation, margins); err != nil {
+		if err := converter.GeneratePDF(ctx, finalImagePaths, outPath, pageSize, orientation, margins); err != nil {
 			worker.PublishEvent(ctx, jobId, "FAILED", 0, fmt.Sprintf("PDF Generation failed: %v", err))
 			return err
 		}
