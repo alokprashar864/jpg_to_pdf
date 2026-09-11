@@ -1,7 +1,7 @@
 export async function uploadFileToS3(
   file: File,
   url: string,
-  onProgress: (progress: number) => void
+  onProgress: (progress: number) => void = () => {}
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();

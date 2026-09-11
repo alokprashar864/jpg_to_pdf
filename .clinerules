@@ -1,0 +1,32 @@
+# KrocPDF — Cline / Roo-Code Rules & Autonomous Guidelines
+# Target: Cline & Roo-Code AI Agents
+
+## Project Identity & Architecture
+KrocPDF is a privacy-first, dual-engine document conversion platform:
+- `frontend/`: Next.js 16 (App Router), React 19, Tailwind v4, `@hello-pangea/dnd`, `pdf-lib` (WASM).
+- `backend-api/`: NestJS 12, Express, Prisma 5, IORedis, `@aws-sdk/client-s3`, Oxlint, Vitest.
+- `worker-service/`: Go 1.25, `pdfcpu`, `aws-sdk-go-v2`, `go-redis/v9`.
+- Infrastructure: Docker Compose with PostgreSQL 16, Redis 7 (AOF), and MinIO S3 (1-day retention lifecycle).
+
+## Strict Guardrails (Zero Tolerance)
+1. **WASM Privacy Invariant**: Never disable or bypass local WASM conversion (`localConverter.ts` via `pdf-lib`) for payloads $<50$ MB.
+2. **Next.js 16 Agent Header**: Never touch or remove lines 1–9 in `frontend/AGENTS.md` (`<!-- BEGIN:nextjs-agent-rules --> ... <!-- END:nextjs-agent-rules -->`).
+3. **No `any` Types**: TypeScript code must have 0 `any` annotations. Use typed `unknown` in catch blocks.
+4. **Tailwind v4 Invariant**: Do NOT generate `tailwind.config.js`. Declare theme tokens in `frontend/src/app/globals.css` with `@theme`.
+5. **Memory Management**: Every `URL.createObjectURL` MUST have a matching `URL.revokeObjectURL` cleanup handler.
+6. **No Secrets**: Never commit `.env` files with actual keys or passwords.
+7. **Git Safety**: Never push directly to `main`. Use descriptive feature/fix branches.
+
+## Execution Order (5-Wave Protocol)
+When performing cross-service refactors or features:
+1. Wave 1: Infra & Schema (`docker-compose.yml`, `prisma/schema.prisma`)
+2. Wave 2: Go Worker Core (`worker-service/internal/`)
+3. Wave 3: NestJS API Gateway & SSE (`backend-api/src/`)
+4. Wave 4: Next.js UI & Hooks (`frontend/src/`)
+5. Wave 5: Monorepo Verification
+
+## Verification Checklist
+Always execute and verify before completing a task:
+- Frontend: `cd frontend && npx tsc --noEmit && npm run lint`
+- Backend API: `cd backend-api && npm run lint && npm run test`
+- Worker Service: `cd worker-service && go vet ./...`
