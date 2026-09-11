@@ -1,23 +1,25 @@
 <div align="center">
 
-# ⚡ JPG to PDF Converter Platform
+<img src="docs/assets/KrocPDF_Logo_Without_Bg.png" alt="KrocPDF Logo" width="120" />
+
+# ⚡ KrocPDF — Privacy-First Document Platform
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=A855F7&center=true&vCenter=true&random=false&width=750&lines=The+Anti-iLovePDF%3A+100%25+Privacy-First+Document+Engine;100MB+Free+Files+%E2%80%A2+Zero+Watermarks+%E2%80%A2+Zero+Ads;Dual+Engine%3A+Client-Side+WASM+%2B+High-Throughput+Go;Sub-800ms+Compilation+%E2%80%A2+Real-Time+SSE+Progress;Built+with+Next.js+14+%2B+NestJS+%2B+Redis+%2B+Cloudflare+R2" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=A855F7&center=true&vCenter=true&random=false&width=750&lines=The+Anti-iLovePDF%3A+100%25+Privacy-First+Document+Engine;100MB+Free+Files+%E2%80%A2+Zero+Watermarks+%E2%80%A2+Zero+Ads;Dual+Engine%3A+Client-Side+WASM+%2B+High-Throughput+Go;Sub-800ms+Compilation+%E2%80%A2+Real-Time+SSE+Progress;Built+with+Next.js+16+%2B+NestJS+%2B+Redis+%2B+Cloudflare+R2" alt="Typing SVG" />
 </p>
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
   <a href="#"><img src="https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg" alt="Status" /></a>
-  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14-black?logo=next.js" alt="Next.js" /></a>
-  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-10-E0234E?logo=nestjs" alt="NestJS" /></a>
-  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.21-00ADD8?logo=go" alt="Go" /></a>
-  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql" alt="PostgreSQL" /></a>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" /></a>
+  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs" alt="NestJS" /></a>
+  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.25-00ADD8?logo=go" alt="Go" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql" alt="PostgreSQL" /></a>
   <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-Streams-DC382D?logo=redis" alt="Redis Streams" /></a>
   <a href="https://www.cloudflare.com/products/r2/"><img src="https://img.shields.io/badge/Cloudflare-R2_%240_Egress-F38020?logo=cloudflare" alt="Cloudflare R2" /></a>
 </p>
 
-> **The Anti-iLovePDF**: An enterprise-grade, privacy-first JPG to PDF conversion platform. Experience **100 MB free file limits**, **zero forced watermarks**, **zero intrusive ads**, and a dual-engine architecture offering **100% in-browser WebAssembly conversion** or **high-throughput distributed cloud processing**.
+> **The Anti-iLovePDF**: An enterprise-grade, privacy-first document conversion platform. Experience **100 MB free file limits**, **zero forced watermarks**, **zero intrusive ads**, and a dual-engine architecture offering **100% in-browser WebAssembly conversion** or **high-throughput distributed cloud processing**.
 
 <div align="center">
   <a href="https://jpg-to-pdf-zeta.vercel.app">
@@ -33,7 +35,28 @@
 </p>
 
 </div>
---
+
+---
+
+## 📸 Visual Showcase & UI Interface
+
+<div align="center">
+
+### 🌐 Modular Landing Page & Tool Hub (`/`)
+<img src="docs/assets/krocpdf_homepage.png" alt="KrocPDF Landing Page" width="95%" />
+
+<br/><br/>
+
+### ⚡ Dedicated In-Browser Conversion Pages (`/png-to-pdf`, `/jpg-to-pdf`)
+<p align="center">
+  <img src="docs/assets/krocpdf_png_to_pdf.png" alt="PNG to PDF Conversion Page" width="48%" />
+  &nbsp;
+  <img src="docs/assets/krocpdf_jpg_to_pdf.png" alt="JPG to PDF Conversion Page" width="48%" />
+</p>
+
+</div>
+
+---
 
 ## 📑 Interactive System Radar & Directory
 
