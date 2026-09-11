@@ -31,14 +31,51 @@ export async function generateLocalPdf(
   
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const arrayBuffer = await file.arrayBuffer();
     
+    // Create image element to draw on canvas
+    const imageUrl = URL.createObjectURL(file);
+    let htmlImage: HTMLImageElement | null = new Image();
+    await new Promise((resolve, reject) => {
+      if (!htmlImage) return reject();
+      htmlImage.onload = resolve;
+      htmlImage.onerror = reject;
+      htmlImage.src = imageUrl;
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = htmlImage.width;
+    canvas.height = htmlImage.height;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      // Flatten transparency to white by default (required for standard PDF embedding without alpha channels if not supported, or just to unify)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(htmlImage, 0, 0);
+    }
+
+    const dataUrl = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 1.0);
+    const base64Data = dataUrl.split(',')[1];
+    
+    // Convert base64 to Uint8Array for pdf-lib
+    const binaryString = window.atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let j = 0; j < binaryString.length; j++) {
+      bytes[j] = binaryString.charCodeAt(j);
+    }
+
     let image;
     if (file.type === 'image/jpeg') {
-      image = await pdfDoc.embedJpg(arrayBuffer);
+      image = await pdfDoc.embedJpg(bytes);
     } else if (file.type === 'image/png') {
-      image = await pdfDoc.embedPng(arrayBuffer);
+      image = await pdfDoc.embedPng(bytes);
     } else {
+      // Explicit cleanup before continue
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = 0;
+      canvas.height = 0;
+      URL.revokeObjectURL(imageUrl);
+      htmlImage = null;
       continue;
     }
     
@@ -84,6 +121,18 @@ export async function generateLocalPdf(
       height: finalHeight,
     });
     
+    // Explicit Cleanup for memory bounding
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    canvas.width = 0;
+    canvas.height = 0;
+    URL.revokeObjectURL(imageUrl);
+    htmlImage = null;
+    
+    // Yield to GC
+    await new Promise(r => setTimeout(r, 10));
+
     onProgress(Math.round(((i + 1) / files.length) * 100));
   }
 

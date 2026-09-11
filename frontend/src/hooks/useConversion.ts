@@ -53,12 +53,12 @@ export function useConversion() {
         cleanupSSE();
       });
 
-      es.addEventListener('error', (e) => {
+      es.addEventListener('error', (e: Event) => {
         // Sometimes the backend sends an explicit error event payload, otherwise it's a generic connection error
         let errorMsg = 'Connection to server lost or job failed.';
         try {
-          if ((e as any).data) {
-            const data = JSON.parse((e as any).data);
+          if ('data' in e && typeof (e as MessageEvent).data === 'string') {
+            const data = JSON.parse((e as MessageEvent).data);
             errorMsg = data.message || errorMsg;
           }
         } catch { }
@@ -68,9 +68,9 @@ export function useConversion() {
         cleanupSSE();
       });
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('ERROR');
-      setMessage(err.message);
+      setMessage(err instanceof Error ? err.message : 'An unknown error occurred');
     }
   };
 

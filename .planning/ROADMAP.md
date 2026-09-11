@@ -1,49 +1,46 @@
 # Engineering Implementation Roadmap
 
-### Phase 1: Local Subsystem Bootstrap
-- [ ] Configure `docker-compose.yml` with Postgres 16, Redis 7 (Streams enabled), and MinIO.
-- [ ] Set up MinIO bucket with a local CORS policy (`PUT`, `GET`, headers: `*`) and 24h lifecycle expiry.
-- [ ] Initialize NestJS project with Prisma ORM and generate database migrations.
+## Milestone 1: Category Killer (v1.0.0) — [COMPLETED]
+- [x] Phase 1: Local Subsystem Bootstrap (`docker-compose.yml`, Postgres 16, Redis 7, MinIO)
+- [x] Phase 2: Orchestration & Ingestion Engine (NestJS 12, Prisma 5, Redis Streams, SSE)
+- [x] Phase 3: High-Performance Go Worker Daemon (Go 1.25, `pdfcpu`, Redis Streams consumer group)
+- [x] Phase 4: Frontend Client Core (Next.js 16, React 19, `@hello-pangea/dnd`, Lucide icons)
+- [x] Phase 5: Anti-iLovePDF Core (100MB cloud upload, no watermarks, margin & orientation controls)
+- [x] Phase 6: Trust Elements (60-min timer, instant purge)
+- [x] Phase 7: Client-Side WASM Engine (`pdf-lib` local in-browser compilation)
+- [x] Phase 8: Autonomous Multi-Agent & IDE Swarm Directives (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.clinerules`)
 
-### Phase 2: Orchestration & Ingestion Engine (NestJS)
-- [ ] Implement AWS S3 SDK wrapper targeting MinIO/R2 endpoints.
-- [ ] Build `POST /conversions` generating pre-signed PUT URLs with strict content-length and MIME restrictions.
-- [ ] Implement `POST /conversions/{id}/start` with `s3.headObject()` validation and Redis Stream `XADD` dispatch.
-- [ ] Implement SSE gateway using NestJS `Observable` hooked to Redis Pub/Sub status events.
+---
 
-### Phase 3: High-Performance Go Worker Daemon
-- [ ] Implement Go consumer group loop using `go-redis` (`XREADGROUP`, `XACK`).
-- [ ] Add 64 KB S3 byte-range header reader for PNG/JPG dimension parsing and bomb rejection.
-- [ ] Integrate `govips` for memory-bounded image normalization and `pdfcpu` for multi-page compilation.
-- [ ] Implement parent-child execution sandboxing (`setrlimit` / isolation) to survive unexpected decode panics.
-- [ ] Build crash recovery daemon using `XAUTOCLAIM` for orphaned tasks.
+## Milestone 2: Expanding to PNG: The Transparency Challenge (Current)
 
-### Phase 4: Frontend Client (Next.js)
-- [ ] Build drag-and-drop upload zone with client-side image re-ordering.
-- [ ] Implement chunked direct-to-S3 upload handler with per-file progress tracking.
-- [ ] Connect SSE subscriber to handle real-time progress indicators and immediate download triggering.
+### Phase 10: Binary Header Sanitization & Corrupt File Guard
+- [ ] Implement fast magic byte scanner (`\x89PNG\r\n\x1a\n` and `\xFF\xD8\xFF`) in frontend before queuing.
+- [ ] Add pre-flight validation in `backend-api` to prevent malformed binaries from clogging Redis Streams.
+- [ ] Add corrupt file error handling in Go worker daemon to prevent panics and record failed job metrics.
 
-### Phase 5: Product Core Upgrade (The "Anti-iLovePDF" Strategy)
-- [ ] Increase upload limits to 100MB per file in API validation.
-- [ ] Add PDF generation parameters to backend API (margins, page size, orientation).
-- [ ] Update Go Worker `pdfcpu` integration to apply margins, orientation, and specific page sizes based on payload.
+### Phase 11: Color Profile Normalization & Alpha Flattening (Dual-Engine Core)
+- [ ] **Client WASM Engine (`frontend/src/lib/localConverter.ts`)**:
+  - Implement canvas-based alpha channel compositing for `FLATTEN_WHITE` and `FLATTEN_BLACK`.
+  - Retain raw 32-bit RGBA for `KEEP_TRANSPARENT` embedding into `pdf-lib`.
+  - Convert indexed palette and grayscale-alpha PNGs into standard sRGB canvas buffers.
+- [ ] **Go Worker Engine (`worker-service/internal/`)**:
+  - Update Go conversion options struct to accept `transparencyMode` (`flatten_white`, `flatten_black`, `keep_transparent`).
+  - Implement Go-native image decoding/compositing for PNG alpha flattening before `pdfcpu` assembly.
 
-### Phase 6: Advanced UI & Trust Elements
-- [ ] Implement advanced drag-and-drop reordering UI in Next.js.
-- [ ] Build "Delete Now" API endpoint and frontend button.
-- [ ] Add live countdown timer component synced with 1-hour lifecycle rule.
+### Phase 12: Memory Bounding & Auto-Fallback Routing
+- [ ] Refactor client-side canvas rendering from parallel `Promise.all` into sequential, chunked stream execution.
+- [ ] Add memory and batch size evaluation logic ($\le 20$ files && $\le 50\text{ MB} \rightarrow$ WASM, else auto-route to Cloud).
+- [ ] Implement silent auto-fallback to Cloud when browser canvas allocation encounters low device RAM.
 
-### Phase 7: Client-Side WASM Engine (Privacy Hook)
-- [ ] Integrate `pdf-lib` via WebAssembly for purely in-browser JPG to PDF conversion.
-- [ ] Build a toggle switch in UI for "Cloud Fast" vs "Local Private" conversion modes.
+### Phase 13: UI Upgrades & Transparency Controls
+- [ ] Expand file dropzone and file input to support `.png`, `.jpg`, `.jpeg`, `.webp`.
+- [ ] Add CSS checkerboard backdrop styling to thumbnail preview cards in `ConverterWidget.tsx`.
+- [ ] Add a segmented control for Transparency Modes: `Flatten White` (Default), `Flatten Black`, `Keep Transparent`.
+- [ ] Build Engine State Indicator Badge: ⚡ *"Processing Locally (Zero-Trust)"* vs. ☁️ *"Cloud Batch Mode"*.
+- [ ] Update frontend types and API client DTOs to support transparency settings.
 
-### Phase 8: Programmatic SEO Architecture
-- [ ] Set up Next.js dynamic catch-all routes (`[...slug]`) for SEO tool pages.
-- [ ] Create a JSON dictionary of long-tail keywords (e.g., A4, margins, no-watermark) mapping to specific default tool settings.
-- [ ] Implement JSON-LD `SoftwareApplication` Schema and FAQ schema for all dynamically generated routes.
-
-### Phase 9: Cloudflare R2 Production Setup
-- [ ] Remove all legacy AWS S3 nomenclature from documentation and SDK wrappers; explicitly brand as Cloudflare R2.
-- [ ] Write initialization script/guide for creating R2 Bucket, generating R2 API Tokens, and applying CORS settings.
-- [ ] Implement R2 24-hour object lifecycle deletion rule via API or provide explicit Cloudflare dashboard instructions.
-- [ ] Validate pre-signed URLs (PUT and GET) against the specific Cloudflare R2 endpoint format (`<account_id>.r2.cloudflarestorage.com`).
+### Phase 14: Monorepo Verification & E2E Test Suite
+- [ ] Execute unit tests for PNG alpha flattening with white/black backdrops and transparent overlays.
+- [ ] Verify `npx tsc --noEmit` and `npm run lint` across `frontend/` and `backend-api/`.
+- [ ] Test end-to-end trace with sample transparent logos and indexed PNGs.

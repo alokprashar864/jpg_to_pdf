@@ -6,6 +6,7 @@ import { useConversion } from '@/hooks/useConversion';
 import { uploadFileToS3 } from '@/lib/uploader';
 import { generateLocalPdf } from '@/lib/localConverter';
 import { API_BASE_URL } from '@/lib/api';
+import { validateImageHeader } from '@/lib/sanitizer';
 import { PrivacyTimer } from '@/components/PrivacyTimer';
 import { UploadCloud, GripVertical, X, FileImage, Settings, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
@@ -19,6 +20,7 @@ interface ImageFile {
 export function ConverterWidget() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [settings, setSettings] = useState({ pageSize: 'A4', orientation: 'PORTRAIT', margins: 'NONE', dpi: 150, engine: 'cloud' });
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const { status, setStatus, progress, setProgress, message, setMessage, downloadUrl, setDownloadUrl, jobId, triggerJobAndListen, cleanupSSE } = useConversion();
 
@@ -32,22 +34,41 @@ export function ConverterWidget() {
 
   const onDragOver = (e: React.DragEvent) => e.preventDefault();
 
-  const onDrop = useCallback((e: React.DragEvent) => {
+  const onDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     if (status !== 'IDLE' && status !== 'ERROR') return;
 
     const droppedFiles = Array.from(e.dataTransfer.files).filter(f =>
-      f.type === 'image/jpeg' || f.type === 'image/png'
+      f.type === 'image/jpeg' || f.type === 'image/png' || f.type === 'image/webp'
     );
 
-    const newImages = droppedFiles.map(file => ({
+    const validFiles: File[] = [];
+    for (const f of droppedFiles) {
+      if (await validateImageHeader(f)) {
+        validFiles.push(f);
+      } else {
+        setStatus('ERROR');
+        setMessage(`Invalid or corrupt image: ${f.name}`);
+      }
+    }
+
+    const newImages = validFiles.map(file => ({
       id: crypto.randomUUID(),
       file,
       previewUrl: URL.createObjectURL(file)
     }));
 
-    setImages(prev => [...prev, ...newImages]);
-  }, [status]);
+    setImages(prev => {
+      const nextImages = [...prev, ...newImages];
+      const totalBytes = nextImages.reduce((sum, img) => sum + img.file.size, 0);
+      if (nextImages.length > 20 || totalBytes > 50 * 1024 * 1024) {
+        setSettings(s => ({ ...s, engine: 'cloud' }));
+        setToastMsg('Payload too large for local processing. Falling back to Cloud Batch Mode.');
+        setTimeout(() => setToastMsg(null), 5000);
+      }
+      return nextImages;
+    });
+  }, [status, setStatus, setMessage]);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -132,7 +153,13 @@ export function ConverterWidget() {
   };
 
   return (
-    <div className="max-w-4xl w-full space-y-8">
+    <div className="max-w-4xl w-full space-y-8 relative">
+      {toastMsg && (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[calc(100%+1rem)] z-50 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg shadow-blue-900/20 whitespace-nowrap animate-in fade-in slide-in-from-bottom-2">
+          {toastMsg}
+        </div>
+      )}
+
       {/* Status Banner */}
         {status !== 'IDLE' && (
           <div className={clsx(
@@ -223,14 +250,33 @@ export function ConverterWidget() {
                   multiple
                   accept="image/jpeg, image/png"
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     if (!e.target.files) return;
-                    const newImages = Array.from(e.target.files).map(file => ({
+                    const selectedFiles = Array.from(e.target.files);
+                    const validFiles: File[] = [];
+                    for (const f of selectedFiles) {
+                      if (await validateImageHeader(f)) {
+                        validFiles.push(f);
+                      } else {
+                        setStatus('ERROR');
+                        setMessage(`Invalid or corrupt image: ${f.name}`);
+                      }
+                    }
+                    const newImages = validFiles.map(file => ({
                       id: crypto.randomUUID(),
                       file,
                       previewUrl: URL.createObjectURL(file)
                     }));
-                    setImages(prev => [...prev, ...newImages]);
+                    setImages(prev => {
+                      const nextImages = [...prev, ...newImages];
+                      const totalBytes = nextImages.reduce((sum, img) => sum + img.file.size, 0);
+                      if (nextImages.length > 20 || totalBytes > 50 * 1024 * 1024) {
+                        setSettings(s => ({ ...s, engine: 'cloud' }));
+                        setToastMsg('Payload too large for local processing. Falling back to Cloud Batch Mode.');
+                        setTimeout(() => setToastMsg(null), 5000);
+                      }
+                      return nextImages;
+                    });
                   }}
                 />
               </label>
@@ -246,7 +292,15 @@ export function ConverterWidget() {
 
                 <div className="space-y-4">
                   <div className="p-3 bg-neutral-950 border border-neutral-800 rounded-xl space-y-2">
-                    <p className="text-sm font-medium text-neutral-300">Processing Engine</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-neutral-300">Processing Engine</p>
+                      <span className={clsx(
+                        "text-[10px] uppercase font-bold px-2 py-1 rounded-full",
+                        settings.engine === 'local' ? "bg-purple-950 text-purple-400" : "bg-blue-950 text-blue-400"
+                      )}>
+                        {settings.engine === 'local' ? '⚡ Processing Locally (Zero-Trust)' : '☁️ Cloud Batch Mode'}
+                      </span>
+                    </div>
                     <div className="flex bg-neutral-900 rounded-lg p-1">
                       <button
                         onClick={() => setSettings({ ...settings, engine: 'cloud' })}
@@ -255,16 +309,18 @@ export function ConverterWidget() {
                           settings.engine === 'cloud' ? "bg-blue-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
                         )}
                       >
-                        Cloud Fast
+                        Force Cloud
                       </button>
                       <button
                         onClick={() => setSettings({ ...settings, engine: 'local' })}
+                        disabled={images.length > 20 || images.reduce((sum, img) => sum + img.file.size, 0) > 50 * 1024 * 1024}
                         className={clsx(
-                          "flex-1 py-1.5 text-xs font-medium rounded-md transition",
+                          "flex-1 py-1.5 text-xs font-medium rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed",
                           settings.engine === 'local' ? "bg-purple-600 text-white shadow-md" : "text-neutral-400 hover:text-white"
                         )}
+                        title={images.length > 20 || images.reduce((sum, img) => sum + img.file.size, 0) > 50 * 1024 * 1024 ? "Payload too large for local processing" : ""}
                       >
-                        Local Private
+                        Force Local
                       </button>
                     </div>
                   </div>
