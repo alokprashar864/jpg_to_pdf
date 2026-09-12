@@ -22,9 +22,6 @@ export function Footer() {
                   width={28}
                   height={28}
                   className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-200"
-                  style={{
-                    filter: 'drop-shadow(1px 0 0 rgba(255,255,255,0.95)) drop-shadow(-1px 0 0 rgba(255,255,255,0.95)) drop-shadow(0 1px 0 rgba(255,255,255,0.95)) drop-shadow(0 -1px 0 rgba(255,255,255,0.95)) drop-shadow(0 0 6px rgba(255,255,255,0.5)) drop-shadow(0 0 12px rgba(59,130,246,0.35))'
-                  }}
                 />
               </div>
               <span className="text-base font-bold tracking-tight">

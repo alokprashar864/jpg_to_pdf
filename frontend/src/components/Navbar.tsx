@@ -36,9 +36,6 @@ export function Navbar() {
                 width={32}
                 height={32}
                 className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-200"
-                style={{
-                  filter: 'drop-shadow(1px 0 0 rgba(255,255,255,0.95)) drop-shadow(-1px 0 0 rgba(255,255,255,0.95)) drop-shadow(0 1px 0 rgba(255,255,255,0.95)) drop-shadow(0 -1px 0 rgba(255,255,255,0.95)) drop-shadow(0 0 6px rgba(255,255,255,0.5)) drop-shadow(0 0 12px rgba(59,130,246,0.35))'
-                }}
                 priority
               />
             </div>
